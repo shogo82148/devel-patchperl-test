@@ -45,7 +45,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Devel-PatchPerl.tar.gz
-          path: Devel-PatchPerl-*.tar.gz
+          path: devel-patchperl/Devel-PatchPerl-*.tar.gz
 
   build:
     runs-on: ubuntu-22.04-arm
