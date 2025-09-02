@@ -69,4 +69,4 @@ jobs:
       - name: install deps
         run: cpanm -n Devel-PatchPerl-*.tar.gz
       - name: build perl
-        run: ./build-perl.pl
+        run: ./build-perl.pl ${{ matrix.perl }}
