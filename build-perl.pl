@@ -17,10 +17,16 @@ sub execute_or_die(@cmd) {
     }
 }
 
-execute_or_die("curl", "-sSL", "-o", "perl.tar.gz", "https://github.com/Perl/perl5/archive/refs/tags/v$perl_version.tar.gz");
-execute_or_die("tar", "-xvf", "perl.tar.gz");
+my $url = "https://github.com/Perl/perl5/archive/refs/tags/v$perl_version.tar.gz";
+if ($perl_version =~ /^5[.][6-9][.]/) {
+  $url = "https://github.com/Perl/perl5/archive/refs/tags/perl-$perl_version.tar.gz";
+}
 
-chdir("perl5-$perl_version") or croak "chdir failed: $!";
+mkdir "perl";
+execute_or_die("curl", "-sSL", "-o", "perl.tar.gz", $url);
+execute_or_die("tar", "-xvf", "perl.tar.gz", "-C", "perl", "--strip-components=1");
+
+chdir("perl") or croak "chdir failed: $!";
 execute_or_die("patchperl");
 execute_or_die("./Configure", "-des", "-Dusedevel");
 execute_or_die("make", "depend");
