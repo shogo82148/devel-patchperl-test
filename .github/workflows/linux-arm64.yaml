@@ -28,10 +28,30 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
+  patchperl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.42"
+      - name: install deps
+        run: cpanm -n Dist::Zilla
+      - name: build Devel::PatchPerl
+        run: |
+          git clone https://github.com/bingos/devel-patchperl.git
+          cd devel-patchperl
+          dzil authordeps --missing | cpanm -n
+          dzil build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Devel-PatchPerl.tar.gz
+          path: Devel-PatchPerl-*.tar.gz
+
   build:
     runs-on: ubuntu-22.04-arm
     needs:
       - list
+      - patchperl
     permissions:
       contents: read
     timeout-minutes: 25
@@ -40,5 +60,13 @@ jobs:
       matrix: ${{fromJson(needs.list.outputs.matrix)}}
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.42"
+      - uses: actions/download-artifact@v4
+        with:
+          name: Devel-PatchPerl.tar.gz
+      - name: install deps
+        run: cpanm -n Devel-PatchPerl-*.tar.gz
       - name: build perl
         run: ./build-perl.pl
