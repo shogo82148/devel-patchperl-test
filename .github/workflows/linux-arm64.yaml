@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@v5.0.0
       - id: set-matrix
         name: list available perl versions
         run: |
@@ -31,7 +31,7 @@ jobs:
   patchperl:
     runs-on: ubuntu-latest
     steps:
-      - uses: shogo82148/actions-setup-perl@v1
+      - uses: shogo82148/actions-setup-perl@v1.44.4
         with:
           perl-version: "5.42"
       - name: install deps
@@ -42,7 +42,7 @@ jobs:
           cd devel-patchperl
           dzil authordeps --missing | cpanm -n
           dzil build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4.6.2
         with:
           name: Devel-PatchPerl.tar.gz
           path: devel-patchperl/Devel-PatchPerl-*.tar.gz
@@ -59,11 +59,11 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.list.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - uses: shogo82148/actions-setup-perl@v1
+      - uses: actions/checkout@v5.0.0
+      - uses: shogo82148/actions-setup-perl@v1.44.4
         with:
           perl-version: "5.42"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4.3.0
         with:
           name: Devel-PatchPerl.tar.gz
       - name: install deps
